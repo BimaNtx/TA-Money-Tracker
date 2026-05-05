@@ -20,13 +20,15 @@ class TransactionAdapter extends TypeAdapter<Transaction> {
       amount: fields[2] as int,
       description: fields[3] as String,
       createdAt: fields[4] as DateTime,
+      // Field 5 (category) mungkin tidak ada pada data lama → fallback 'Lainnya'
+      category: fields[5] as String? ?? 'Lainnya',
     );
   }
 
   @override
   void write(BinaryWriter writer, Transaction obj) {
     writer
-      ..writeByte(5) // jumlah field
+      ..writeByte(6) // jumlah field (0–5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -36,7 +38,9 @@ class TransactionAdapter extends TypeAdapter<Transaction> {
       ..writeByte(3)
       ..write(obj.description)
       ..writeByte(4)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(5)
+      ..write(obj.category);
   }
 
   @override

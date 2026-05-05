@@ -8,9 +8,13 @@ class TransactionForm extends StatefulWidget {
   /// Mode: null = create baru, ada value = edit
   final Transaction? existingTransaction;
 
-  /// Callback saat user menekan Simpan
-  final void Function(TransactionType type, int amount, String description)
-      onSave;
+  /// Callback saat user menekan Simpan — termasuk category
+  final void Function(
+    TransactionType type,
+    int amount,
+    String description,
+    String category,
+  ) onSave;
 
   const TransactionForm({
     super.key,
@@ -26,9 +30,15 @@ class _TransactionFormState extends State<TransactionForm> {
   late TransactionType _selectedType;
   late TextEditingController _amountController;
   late TextEditingController _descriptionController;
+  late String _selectedCategory;
   final _formKey = GlobalKey<FormState>();
 
   bool get isEditMode => widget.existingTransaction != null;
+
+  // Daftar kategori berdasarkan tipe transaksi
+  List<String> get _categories => _selectedType == TransactionType.income
+      ? incomeCategories
+      : expenseCategories;
 
   @override
   void initState() {
@@ -41,6 +51,12 @@ class _TransactionFormState extends State<TransactionForm> {
     _descriptionController = TextEditingController(
       text: widget.existingTransaction?.description ?? '',
     );
+    // Inisialisasi kategori: pakai data lama, atau default pertama dari list
+    final existingCategory = widget.existingTransaction?.category;
+    _selectedCategory = (existingCategory != null &&
+            _categories.contains(existingCategory))
+        ? existingCategory
+        : _categories.last; // fallback ke 'Lainnya'
   }
 
   @override
@@ -50,10 +66,23 @@ class _TransactionFormState extends State<TransactionForm> {
     super.dispose();
   }
 
+  void _onTypeChanged(Set<TransactionType> value) {
+    setState(() {
+      _selectedType = value.first;
+      // Reset kategori ke 'Lainnya' saat tipe berubah agar tidak invalid
+      _selectedCategory = _categories.last;
+    });
+  }
+
   void _handleSave() {
     if (_formKey.currentState!.validate()) {
       final amount = int.parse(_amountController.text.replaceAll('.', ''));
-      widget.onSave(_selectedType, amount, _descriptionController.text.trim());
+      widget.onSave(
+        _selectedType,
+        amount,
+        _descriptionController.text.trim(),
+        _selectedCategory,
+      );
       Navigator.pop(context);
     }
   }
@@ -69,18 +98,17 @@ class _TransactionFormState extends State<TransactionForm> {
     final labelColor =
         isDark ? const Color(0xFFAAAAAA) : const Color(0xFF757575);
     final inputTextColor = isDark ? Colors.white : const Color(0xFF212121);
-    final fillColor =
-        isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50;
-    final handleColor =
-        isDark ? const Color(0xFF444444) : Colors.grey.shade300;
-    final closeBtnBg =
-        isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100;
+    final fillColor = isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50;
+    final handleColor = isDark ? const Color(0xFF444444) : Colors.grey.shade300;
+    final closeBtnBg = isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100;
     final hintColor =
         isDark ? const Color(0xFF555555) : Colors.grey.shade300;
     final descHintColor =
         isDark ? const Color(0xFF555555) : Colors.grey.shade400;
     final segmentUnselectedBg =
         isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50;
+    final dropdownBorder =
+        isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade200;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -155,9 +183,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 ),
               ],
               selected: {_selectedType},
-              onSelectionChanged: (Set<TransactionType> value) {
-                setState(() => _selectedType = value.first);
-              },
+              onSelectionChanged: _onTypeChanged,
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
@@ -182,7 +208,69 @@ class _TransactionFormState extends State<TransactionForm> {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
+
+            // ── Dropdown Kategori ─────────────────────────────────────────
+            Text(
+              'Kategori',
+              style: GoogleFonts.poppins(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: labelColor,
+              ),
+            ),
+            const SizedBox(height: 6),
+            DropdownButtonFormField<String>(
+              initialValue: _selectedCategory,
+              dropdownColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: fillColor,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide(color: dropdownBorder, width: 1),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide(color: dropdownBorder, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide:
+                      const BorderSide(color: primaryColor, width: 1.5),
+                ),
+              ),
+              icon: Icon(Icons.keyboard_arrow_down_rounded, color: labelColor),
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: inputTextColor,
+              ),
+              items: _categories.map((cat) {
+                return DropdownMenuItem<String>(
+                  value: cat,
+                  child: Row(
+                    children: [
+                      Icon(
+                        categoryIcon(cat),
+                        size: 18,
+                        color: _selectedType == TransactionType.income
+                            ? incomeColor
+                            : expenseColor,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(cat),
+                    ],
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) setState(() => _selectedCategory = value);
+              },
+            ),
+            const SizedBox(height: 20),
 
             // Input nominal
             Text(
@@ -313,5 +401,25 @@ class _TransactionFormState extends State<TransactionForm> {
         ),
       ),
     );
+  }
+}
+
+/// Mapping kategori → IconData (dipakai di form & tile)
+IconData categoryIcon(String category) {
+  switch (category) {
+    case 'Makan':
+      return Icons.restaurant_rounded;
+    case 'Transport':
+      return Icons.directions_car_rounded;
+    case 'Belanja':
+      return Icons.shopping_cart_rounded;
+    case 'Hiburan':
+      return Icons.movie_rounded;
+    case 'Gaji':
+      return Icons.payments_rounded;
+    case 'Bonus':
+      return Icons.redeem_rounded;
+    default:
+      return Icons.category_rounded;
   }
 }

@@ -24,25 +24,27 @@ class _MainScreenState extends State<MainScreen> {
   // --- CRUD Operations ---
 
   void _addTransaction(
-      TransactionType type, int amount, String description) {
+      TransactionType type, int amount, String description, String category) {
     final newTransaction = Transaction(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       type: type,
       amount: amount,
       description: description,
       createdAt: DateTime.now(),
+      category: category,
     );
     // put() menggunakan id sebagai key agar mudah di-update/hapus
     _box.put(newTransaction.id, newTransaction);
     setState(() {}); // trigger rebuild untuk update saldo
   }
 
-  void _editTransaction(
-      Transaction old, TransactionType type, int amount, String description) {
+  void _editTransaction(Transaction old, TransactionType type, int amount,
+      String description, String category) {
     final updated = old.copyWith(
       type: type,
       amount: amount,
       description: description,
+      category: category,
     );
     _box.put(old.id, updated); // overwrite dengan key yang sama
     setState(() {});
@@ -83,11 +85,11 @@ class _MainScreenState extends State<MainScreen> {
       ),
       builder: (context) => TransactionForm(
         existingTransaction: existing,
-        onSave: (type, amount, description) {
+        onSave: (type, amount, description, category) {
           if (existing != null) {
-            _editTransaction(existing, type, amount, description);
+            _editTransaction(existing, type, amount, description, category);
           } else {
-            _addTransaction(type, amount, description);
+            _addTransaction(type, amount, description, category);
           }
         },
       ),

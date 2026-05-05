@@ -6,6 +6,10 @@ part 'transaction.g.dart';
 /// Disimpan di Hive sebagai int: 0 = income, 1 = expense
 enum TransactionType { income, expense }
 
+/// Daftar kategori untuk setiap tipe transaksi
+const incomeCategories = ['Gaji', 'Bonus', 'Lainnya'];
+const expenseCategories = ['Makan', 'Transport', 'Belanja', 'Hiburan', 'Lainnya'];
+
 /// Model data untuk setiap transaksi keuangan
 @HiveType(typeId: 0)
 class Transaction extends HiveObject {
@@ -24,12 +28,16 @@ class Transaction extends HiveObject {
   @HiveField(4)
   final DateTime createdAt;
 
+  @HiveField(5)
+  final String category; // 'Gaji', 'Makan', 'Lainnya', dll.
+
   Transaction({
     required this.id,
     required TransactionType type,
     required this.amount,
     required this.description,
     required this.createdAt,
+    this.category = 'Lainnya',
   }) : typeIndex = type.index;
 
   /// Getter untuk mendapatkan enum dari typeIndex
@@ -42,6 +50,7 @@ class Transaction extends HiveObject {
     int? amount,
     String? description,
     DateTime? createdAt,
+    String? category,
   }) {
     return Transaction(
       id: id ?? this.id,
@@ -49,6 +58,7 @@ class Transaction extends HiveObject {
       amount: amount ?? this.amount,
       description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,
+      category: category ?? this.category,
     );
   }
 }

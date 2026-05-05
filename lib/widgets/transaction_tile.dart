@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/transaction.dart';
 import '../utils/currency_formatter.dart';
+import 'transaction_form.dart' show categoryIcon;
 
 /// Widget satu baris transaksi, digunakan di HomeScreen & HistoryScreen
 class TransactionTile extends StatelessWidget {
@@ -21,11 +22,12 @@ class TransactionTile extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isIncome = transaction.type == TransactionType.income;
 
+    // Warna aksen berdasarkan tipe transaksi
     final accentColor = isIncome
         ? const Color(0xFF2E7D32) // Green 800
         : const Color(0xFFC62828); // Red 800
 
-    // Icon bg: di dark mode pakai versi lebih gelap agar tidak "blinding"
+    // Warna latar ikon — lebih gelap di dark mode
     final bgColor = isIncome
         ? (isDark ? const Color(0xFF1B3A1E) : const Color(0xFFE8F5E9))
         : (isDark ? const Color(0xFF3A1A1A) : const Color(0xFFFFEBEE));
@@ -36,6 +38,9 @@ class TransactionTile extends StatelessWidget {
     final titleColor = isDark ? Colors.white : const Color(0xFF212121);
     final subtitleColor =
         isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+
+    // Ikon khusus per kategori
+    final icon = categoryIcon(transaction.category);
 
     return Card(
       elevation: 0,
@@ -53,25 +58,23 @@ class TransactionTile extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Row(
             children: [
-              // Ikon arah panah
+              // Ikon kategori dalam lingkaran berwarna
               Container(
-                width: 42,
-                height: 42,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
-                  isIncome
-                      ? Icons.arrow_upward_rounded
-                      : Icons.arrow_downward_rounded,
+                  icon,
                   color: accentColor,
-                  size: 20,
+                  size: 22,
                 ),
               ),
               const SizedBox(width: 12),
 
-              // Keterangan & tanggal
+              // Keterangan & kategori + tanggal
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +82,7 @@ class TransactionTile extends StatelessWidget {
                     Text(
                       transaction.description,
                       style: GoogleFonts.poppins(
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: titleColor,
                       ),
@@ -87,16 +90,40 @@ class TransactionTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      formatDate(transaction.createdAt),
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: subtitleColor,
-                      ),
+                    Row(
+                      children: [
+                        // Badge kategori
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 1),
+                          decoration: BoxDecoration(
+                            color: accentColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            transaction.category,
+                            style: GoogleFonts.poppins(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: accentColor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          formatDate(transaction.createdAt),
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            color: subtitleColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
+
+              const SizedBox(width: 8),
 
               // Nominal
               Text(
