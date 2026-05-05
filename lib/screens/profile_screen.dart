@@ -1,10 +1,149 @@
+import 'dart:io';
+
+import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:money_tracker/models/transaction.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
-/// Halaman profil (Tab 2) — info siswa dan versi aplikasi
-class ProfileScreen extends StatelessWidget {
+/// Halaman profil (Tab 2) — info siswa, versi aplikasi, dan export CSV
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool _isExporting = false;
+
+  /// Mengambil semua transaksi dari Hive, membuat file CSV,
+  /// lalu membagikannya menggunakan share_plus.
+  Future<void> _exportToCSV() async {
+    setState(() => _isExporting = true);
+
+    try {
+      final box = Hive.box<Transaction>('transactions');
+      final transactions = box.values.toList();
+
+      // Tampilkan pesan jika data masih kosong
+      if (transactions.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.info_outline_rounded,
+                      color: Colors.white, size: 20),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Belum ada data transaksi untuk diekspor.',
+                    style: GoogleFonts.poppins(fontSize: 13),
+                  ),
+                ],
+              ),
+              backgroundColor: const Color(0xFF5C6BC0),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              margin: const EdgeInsets.all(16),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Urutkan berdasarkan tanggal terlama → terbaru
+      transactions.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+      // Baris header CSV
+      final List<List<dynamic>> rows = [
+        ['Tanggal', 'Tipe', 'Keterangan', 'Nominal'],
+      ];
+
+      // Konversi setiap transaksi ke baris CSV
+      final dateFormat = DateFormat('dd-MM-yyyy');
+      for (final tx in transactions) {
+        rows.add([
+          dateFormat.format(tx.createdAt),
+          tx.type == TransactionType.income ? 'Pemasukan' : 'Pengeluaran',
+          tx.description,
+          tx.amount,
+        ]);
+      }
+
+      // Ubah List ke string format CSV
+      final csvString = const ListToCsvConverter().convert(rows);
+
+      // Simpan ke direktori sementara
+      final tempDir = await getTemporaryDirectory();
+      final filePath = '${tempDir.path}/Laporan_Keuangan.csv';
+      final file = File(filePath);
+      await file.writeAsString(csvString);
+
+      // Bagikan file menggunakan share_plus
+      await Share.shareXFiles(
+        [XFile(filePath, mimeType: 'text/csv')],
+        subject: 'Laporan Keuangan - Money Tracker',
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.check_circle_outline_rounded,
+                    color: Colors.white, size: 20),
+                const SizedBox(width: 10),
+                Text(
+                  'Laporan CSV berhasil diekspor!',
+                  style: GoogleFonts.poppins(fontSize: 13),
+                ),
+              ],
+            ),
+            backgroundColor: const Color(0xFF009688),
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline_rounded,
+                    color: Colors.white, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Gagal mengekspor: ${e.toString()}',
+                    style: GoogleFonts.poppins(fontSize: 13),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: const Color(0xFFE53935),
+            behavior: SnackBarBehavior.floating,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            margin: const EdgeInsets.all(16),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isExporting = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +219,7 @@ class ProfileScreen extends StatelessWidget {
                 .slideY(begin: 0.2, end: 0, delay: 220.ms, curve: Curves.easeOut),
             const SizedBox(height: 32),
 
-            // Section header
+            // Section header — Tentang Aplikasi
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
@@ -138,6 +277,36 @@ class ProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
+            // Section header — Fitur
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 4, bottom: 12),
+                child: Text(
+                  'Fitur',
+                  style: GoogleFonts.poppins(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF212121),
+                  ),
+                ),
+              ),
+            ).animate().fade(duration: 400.ms, delay: 630.ms),
+
+            // Menu Export CSV
+            _buildExportCard()
+                .animate()
+                .fade(duration: 400.ms, delay: 700.ms)
+                .slideX(
+                  begin: 0.15,
+                  end: 0,
+                  delay: 700.ms,
+                  duration: 400.ms,
+                  curve: Curves.easeOutCubic,
+                ),
+
+            const SizedBox(height: 24),
+
             // Footer badge — fade
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -166,13 +335,93 @@ class ProfileScreen extends StatelessWidget {
               ),
             )
                 .animate()
-                .fade(duration: 400.ms, delay: 700.ms),
+                .fade(duration: 400.ms, delay: 800.ms),
           ],
         ),
       ),
     );
   }
 
+  /// Card khusus untuk tombol Export CSV dengan indikator loading
+  Widget _buildExportCard() {
+    return Card(
+      elevation: 0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: Colors.grey.shade100, width: 1),
+      ),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: InkWell(
+        onTap: _isExporting ? null : _exportToCSV,
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              // Icon container
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF43A047).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: _isExporting
+                    ? const Padding(
+                        padding: EdgeInsets.all(10),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Color(0xFF43A047),
+                        ),
+                      )
+                    : const Icon(
+                        Icons.download_rounded,
+                        color: Color(0xFF43A047),
+                        size: 22,
+                      ),
+              ),
+              const SizedBox(width: 14),
+              // Teks
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Export Laporan (CSV)',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF212121),
+                      ),
+                    ),
+                    Text(
+                      _isExporting
+                          ? 'Sedang memproses...'
+                          : 'Bagikan semua transaksi sebagai file CSV',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: const Color(0xFF9E9E9E),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Chevron
+              if (!_isExporting)
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: Color(0xFFBDBDBD),
+                  size: 20,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Card info generik (tidak dapat di-tap)
   Widget _buildInfoCard({
     required IconData icon,
     required Color iconColor,
