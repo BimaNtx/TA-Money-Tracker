@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: CustomScrollView(
         slivers: [
-          // ── Header + Cards ──────────────────────────────────────────────
+          // ── Header + Cards ────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
@@ -87,28 +87,40 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Greeting
-                  Text(
-                    'Halo, Bima 👋',
-                    style: GoogleFonts.poppins(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF212121),
-                    ),
-                  )
-                      .animate()
-                      .fade(duration: 400.ms)
-                      .slideY(begin: -0.15, end: 0, curve: Curves.easeOut),
+                  Builder(builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Text(
+                      'Halo, Bima 👋',
+                      style: GoogleFonts.poppins(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : const Color(0xFF212121),
+                      ),
+                    )
+                        .animate()
+                        .fade(duration: 400.ms)
+                        .slideY(
+                            begin: -0.15, end: 0, curve: Curves.easeOut);
+                  }),
                   const SizedBox(height: 4),
-                  Text(
-                    'Kelola keuanganmu hari ini',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: const Color(0xFF9E9E9E),
-                    ),
-                  )
-                      .animate()
-                      .fade(duration: 400.ms, delay: 80.ms)
-                      .slideY(begin: -0.1, end: 0, curve: Curves.easeOut),
+                  Builder(builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Text(
+                      'Kelola keuanganmu hari ini',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: isDark
+                            ? const Color(0xFFAAAAAA)
+                            : const Color(0xFF9E9E9E),
+                      ),
+                    )
+                        .animate()
+                        .fade(duration: 400.ms, delay: 80.ms)
+                        .slideY(
+                            begin: -0.1, end: 0, curve: Curves.easeOut);
+                  }),
                   const SizedBox(height: 20),
 
                   // Balance Card
@@ -148,33 +160,39 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 28),
 
                   // Section header transaksi terakhir
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Transaksi Terakhir',
-                        style: GoogleFonts.poppins(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF212121),
-                        ),
-                      ),
-                      if (widget.transactions.length > 5)
-                        TextButton(
-                          onPressed: widget.onViewAll,
-                          child: Text(
-                            'Lihat Semua',
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFF009688),
-                            ),
+                  Builder(builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Transaksi Terakhir',
+                          style: GoogleFonts.poppins(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF212121),
                           ),
                         ),
-                    ],
-                  )
-                      .animate()
-                      .fade(duration: 400.ms, delay: 350.ms),
+                        if (widget.transactions.length > 5)
+                          TextButton(
+                            onPressed: widget.onViewAll,
+                            child: Text(
+                              'Lihat Semua',
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF009688),
+                              ),
+                            ),
+                          ),
+                      ],
+                    )
+                        .animate()
+                        .fade(duration: 400.ms, delay: 350.ms);
+                  }),
                   const SizedBox(height: 8),
                 ],
               ),
@@ -185,34 +203,42 @@ class _HomeScreenState extends State<HomeScreen> {
           if (displayList.isEmpty)
             SliverFillRemaining(
               hasScrollBody: false,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.receipt_long_outlined,
-                      size: 64,
-                      color: Colors.grey.shade300,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Belum ada transaksi',
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        color: Colors.grey.shade400,
+              child: Builder(builder: (context) {
+                final isDark =
+                    Theme.of(context).brightness == Brightness.dark;
+                final iconColor =
+                    isDark ? const Color(0xFF444444) : Colors.grey.shade300;
+                final textColor =
+                    isDark ? const Color(0xFF666666) : Colors.grey.shade400;
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.receipt_long_outlined,
+                        size: 64,
+                        color: iconColor,
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Tekan + untuk menambah transaksi pertamamu',
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        color: Colors.grey.shade400,
+                      const SizedBox(height: 16),
+                      Text(
+                        'Belum ada transaksi',
+                        style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          color: textColor,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Tekan + untuk menambah transaksi pertamamu',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: textColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
             )
           else
             SliverPadding(

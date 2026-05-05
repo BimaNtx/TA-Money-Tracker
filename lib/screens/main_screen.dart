@@ -77,7 +77,7 @@ class _MainScreenState extends State<MainScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -104,7 +104,6 @@ class _MainScreenState extends State<MainScreen> {
         final transactions = box.values.toList();
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF5F5F5),
           body: IndexedStack(
             index: _selectedIndex,
             children: [
@@ -141,10 +140,10 @@ class _MainScreenState extends State<MainScreen> {
           // Bottom Navigation Bar
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 12,
                   offset: const Offset(0, -2),
                 ),
@@ -155,7 +154,7 @@ class _MainScreenState extends State<MainScreen> {
               onDestinationSelected: (index) {
                 setState(() => _selectedIndex = index);
               },
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.transparent,
               elevation: 0,
               height: 68,
               indicatorColor: const Color(0xFF009688).withValues(alpha: 0.1),

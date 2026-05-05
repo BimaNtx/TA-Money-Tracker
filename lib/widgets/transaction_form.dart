@@ -64,6 +64,24 @@ class _TransactionFormState extends State<TransactionForm> {
     const incomeColor = Color(0xFF2E7D32);
     const expenseColor = Color(0xFFC62828);
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleColor = isDark ? Colors.white : const Color(0xFF212121);
+    final labelColor =
+        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF757575);
+    final inputTextColor = isDark ? Colors.white : const Color(0xFF212121);
+    final fillColor =
+        isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50;
+    final handleColor =
+        isDark ? const Color(0xFF444444) : Colors.grey.shade300;
+    final closeBtnBg =
+        isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100;
+    final hintColor =
+        isDark ? const Color(0xFF555555) : Colors.grey.shade300;
+    final descHintColor =
+        isDark ? const Color(0xFF555555) : Colors.grey.shade400;
+    final segmentUnselectedBg =
+        isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50;
+
     return Padding(
       padding: EdgeInsets.only(
         left: 20,
@@ -83,7 +101,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: handleColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -99,14 +117,17 @@ class _TransactionFormState extends State<TransactionForm> {
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF212121),
+                    color: titleColor,
                   ),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close_rounded),
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
                   style: IconButton.styleFrom(
-                    backgroundColor: Colors.grey.shade100,
+                    backgroundColor: closeBtnBg,
                   ),
                 ),
               ],
@@ -141,10 +162,10 @@ class _TransactionFormState extends State<TransactionForm> {
                 backgroundColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
                     return _selectedType == TransactionType.income
-                        ? incomeColor.withValues(alpha: 0.1)
-                        : expenseColor.withValues(alpha: 0.1);
+                        ? incomeColor.withValues(alpha: 0.12)
+                        : expenseColor.withValues(alpha: 0.12);
                   }
-                  return Colors.grey.shade50;
+                  return segmentUnselectedBg;
                 }),
                 foregroundColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
@@ -152,7 +173,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         ? incomeColor
                         : expenseColor;
                   }
-                  return const Color(0xFF757575);
+                  return labelColor;
                 }),
                 side: WidgetStateProperty.all(BorderSide.none),
                 shape: WidgetStateProperty.all(
@@ -169,7 +190,7 @@ class _TransactionFormState extends State<TransactionForm> {
               style: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: const Color(0xFF757575),
+                color: labelColor,
               ),
             ),
             const SizedBox(height: 6),
@@ -180,23 +201,23 @@ class _TransactionFormState extends State<TransactionForm> {
               style: GoogleFonts.poppins(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF212121),
+                color: inputTextColor,
               ),
               decoration: InputDecoration(
                 prefixText: 'Rp  ',
                 prefixStyle: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF757575),
+                  color: labelColor,
                 ),
                 hintText: '0',
                 hintStyle: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  color: Colors.grey.shade300,
+                  color: hintColor,
                 ),
                 filled: true,
-                fillColor: Colors.grey.shade50,
+                fillColor: fillColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide.none,
@@ -226,7 +247,7 @@ class _TransactionFormState extends State<TransactionForm> {
               style: GoogleFonts.poppins(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: const Color(0xFF757575),
+                color: labelColor,
               ),
             ),
             const SizedBox(height: 6),
@@ -235,16 +256,16 @@ class _TransactionFormState extends State<TransactionForm> {
               textCapitalization: TextCapitalization.sentences,
               style: GoogleFonts.poppins(
                 fontSize: 15,
-                color: const Color(0xFF212121),
+                color: inputTextColor,
               ),
               decoration: InputDecoration(
                 hintText: 'Contoh: Beli cilok',
                 hintStyle: GoogleFonts.poppins(
                   fontSize: 15,
-                  color: Colors.grey.shade400,
+                  color: descHintColor,
                 ),
                 filled: true,
-                fillColor: Colors.grey.shade50,
+                fillColor: fillColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: BorderSide.none,

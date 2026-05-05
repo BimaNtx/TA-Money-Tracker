@@ -62,6 +62,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleColor = isDark ? Colors.white : const Color(0xFF212121);
+    final subtitleColor =
+        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+    final searchFill =
+        isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final searchBorder =
+        isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade200;
+    final chipBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final chipBorder =
+        isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade200;
+
     final filtered = _applyFilters(widget.transactions);
     final totalCount = widget.transactions.length;
 
@@ -77,7 +89,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               style: GoogleFonts.poppins(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF212121),
+                color: titleColor,
               ),
             ),
           ),
@@ -87,7 +99,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               '$totalCount transaksi tercatat',
               style: GoogleFonts.poppins(
                 fontSize: 13,
-                color: const Color(0xFF9E9E9E),
+                color: subtitleColor,
               ),
             ),
           ),
@@ -100,24 +112,33 @@ class _HistoryScreenState extends State<HistoryScreen> {
               onChanged: (value) => setState(() => _searchQuery = value),
               style: GoogleFonts.poppins(
                 fontSize: 14,
-                color: const Color(0xFF212121),
+                color: titleColor,
               ),
               decoration: InputDecoration(
                 hintText: 'Cari transaksi...',
                 hintStyle: GoogleFonts.poppins(
                   fontSize: 14,
-                  color: const Color(0xFFBDBDBD),
+                  color: isDark
+                      ? const Color(0xFF555555)
+                      : const Color(0xFFBDBDBD),
                 ),
-                prefixIcon: const Icon(
+                prefixIcon: Icon(
                   Icons.search_rounded,
-                  color: Color(0xFF9E9E9E),
+                  color: isDark
+                      ? const Color(0xFF777777)
+                      : const Color(0xFF9E9E9E),
                   size: 22,
                 ),
                 // Tombol clear muncul saat ada teks
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.close_rounded,
-                            size: 18, color: Color(0xFF9E9E9E)),
+                        icon: Icon(
+                          Icons.close_rounded,
+                          size: 18,
+                          color: isDark
+                              ? const Color(0xFF777777)
+                              : const Color(0xFF9E9E9E),
+                        ),
                         onPressed: () {
                           _searchController.clear();
                           setState(() => _searchQuery = '');
@@ -125,16 +146,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       )
                     : null,
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: searchFill,
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 12, horizontal: 16),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: Colors.grey.shade200, width: 1),
+                  borderSide: BorderSide(color: searchBorder, width: 1),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: Colors.grey.shade200, width: 1),
+                  borderSide: BorderSide(color: searchBorder, width: 1),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -159,16 +180,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: isActive ? Colors.white : const Color(0xFF757575),
+                        color: isActive
+                            ? Colors.white
+                            : (isDark
+                                ? const Color(0xFFAAAAAA)
+                                : const Color(0xFF757575)),
                       ),
                     ),
                     selected: isActive,
                     onSelected: (_) =>
                         setState(() => _selectedFilter = filter),
                     selectedColor: _primaryColor,
-                    backgroundColor: Colors.white,
+                    backgroundColor: chipBg,
                     side: BorderSide(
-                      color: isActive ? _primaryColor : Colors.grey.shade200,
+                      color: isActive ? _primaryColor : chipBorder,
                       width: 1,
                     ),
                     padding: const EdgeInsets.symmetric(
@@ -302,18 +327,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
     required String title,
     required String subtitle,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconColor =
+        isDark ? const Color(0xFF444444) : Colors.grey.shade300;
+    final textColor =
+        isDark ? const Color(0xFF666666) : Colors.grey.shade400;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 64, color: Colors.grey.shade300),
+          Icon(icon, size: 64, color: iconColor),
           const SizedBox(height: 16),
           Text(
             title,
             style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.w500,
-              color: Colors.grey.shade400,
+              color: textColor,
             ),
           ),
           const SizedBox(height: 4),
@@ -322,7 +353,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: 13,
-              color: Colors.grey.shade400,
+              color: textColor,
             ),
           ),
         ],

@@ -147,6 +147,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final settingsBox = Hive.box('settings');
+    final isDarkMode =
+        settingsBox.get('isDarkMode', defaultValue: false) as bool;
+
+    final titleColor =
+        isDark ? Colors.white : const Color(0xFF212121);
+    final subtitleColor =
+        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+    final sectionHeaderColor =
+        isDark ? const Color(0xFFEEEEEE) : const Color(0xFF212121);
+
     return SafeArea(
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -172,10 +185,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ),
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 radius: 48,
-                backgroundColor: Colors.white,
-                child: Icon(
+                backgroundColor:
+                    isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                child: const Icon(
                   Icons.person_rounded,
                   size: 48,
                   color: Color(0xFF009688),
@@ -198,7 +212,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: GoogleFonts.poppins(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF212121),
+                color: titleColor,
               ),
             )
                 .animate()
@@ -211,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               'Siswa RPL Kelas 11',
               style: GoogleFonts.poppins(
                 fontSize: 14,
-                color: const Color(0xFF9E9E9E),
+                color: subtitleColor,
               ),
             )
                 .animate()
@@ -229,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF212121),
+                    color: sectionHeaderColor,
                   ),
                 ),
               ),
@@ -287,20 +301,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF212121),
+                    color: sectionHeaderColor,
                   ),
                 ),
               ),
             ).animate().fade(duration: 400.ms, delay: 630.ms),
 
-            // Menu Export CSV
-            _buildExportCard()
+            // ── Toggle Dark Mode ──────────────────────────────────────────
+            _buildDarkModeCard(
+              isDark: isDark,
+              isDarkMode: isDarkMode,
+              settingsBox: settingsBox,
+            )
                 .animate()
                 .fade(duration: 400.ms, delay: 700.ms)
                 .slideX(
                   begin: 0.15,
                   end: 0,
                   delay: 700.ms,
+                  duration: 400.ms,
+                  curve: Curves.easeOutCubic,
+                ),
+
+            // Menu Export CSV
+            _buildExportCard(isDark: isDark)
+                .animate()
+                .fade(duration: 400.ms, delay: 770.ms)
+                .slideX(
+                  begin: 0.15,
+                  end: 0,
+                  delay: 770.ms,
                   duration: 400.ms,
                   curve: Curves.easeOutCubic,
                 ),
@@ -342,14 +372,91 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  /// Card khusus untuk tombol Export CSV dengan indikator loading
-  Widget _buildExportCard() {
+  /// Card toggle Dark Mode
+  Widget _buildDarkModeCard({
+    required bool isDark,
+    required bool isDarkMode,
+    required Box settingsBox,
+  }) {
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor =
+        isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
+    final titleColor =
+        isDark ? Colors.white : const Color(0xFF212121);
+    final subtitleColor =
+        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+
     return Card(
       elevation: 0,
-      color: Colors.white,
+      color: cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: Colors.grey.shade100, width: 1),
+        side: BorderSide(color: borderColor, width: 1),
+      ),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: SwitchListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          secondary: Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: const Color(0xFF009688).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+              color: const Color(0xFF009688),
+              size: 22,
+            ),
+          ),
+          title: Text(
+            'Mode Gelap',
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: titleColor,
+            ),
+          ),
+          subtitle: Text(
+            isDarkMode ? 'Aktif' : 'Nonaktif',
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              color: subtitleColor,
+            ),
+          ),
+          value: isDarkMode,
+          activeThumbColor: const Color(0xFF009688),
+          activeTrackColor: const Color(0xFF009688).withValues(alpha: 0.4),
+          onChanged: (value) {
+            settingsBox.put('isDarkMode', value);
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Card khusus untuk tombol Export CSV dengan indikator loading
+  Widget _buildExportCard({required bool isDark}) {
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor =
+        isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
+    final titleColor =
+        isDark ? Colors.white : const Color(0xFF212121);
+    final subtitleColor =
+        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+
+    return Card(
+      elevation: 0,
+      color: cardColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: borderColor, width: 1),
       ),
       margin: const EdgeInsets.only(bottom: 10),
       child: InkWell(
@@ -392,7 +499,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF212121),
+                        color: titleColor,
                       ),
                     ),
                     Text(
@@ -401,7 +508,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           : 'Bagikan semua transaksi sebagai file CSV',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: const Color(0xFF9E9E9E),
+                        color: subtitleColor,
                       ),
                     ),
                   ],
@@ -409,9 +516,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               // Chevron
               if (!_isExporting)
-                const Icon(
+                Icon(
                   Icons.chevron_right_rounded,
-                  color: Color(0xFFBDBDBD),
+                  color: isDark
+                      ? const Color(0xFF666666)
+                      : const Color(0xFFBDBDBD),
                   size: 20,
                 ),
             ],
@@ -428,12 +537,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String title,
     required String subtitle,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor =
+        isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
+    final titleColor =
+        isDark ? Colors.white : const Color(0xFF212121);
+    final subtitleColor =
+        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+
     return Card(
       elevation: 0,
-      color: Colors.white,
+      color: cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: Colors.grey.shade100, width: 1),
+        side: BorderSide(color: borderColor, width: 1),
       ),
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
@@ -443,7 +562,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: 42,
           height: 42,
           decoration: BoxDecoration(
-            color: iconColor.withValues(alpha: 0.1),
+            color: iconColor.withValues(alpha: isDark ? 0.15 : 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: iconColor, size: 22),
@@ -453,14 +572,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: const Color(0xFF212121),
+            color: titleColor,
           ),
         ),
         subtitle: Text(
           subtitle,
           style: GoogleFonts.poppins(
             fontSize: 12,
-            color: const Color(0xFF9E9E9E),
+            color: subtitleColor,
           ),
         ),
       ),

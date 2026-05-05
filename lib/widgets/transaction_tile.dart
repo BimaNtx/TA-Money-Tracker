@@ -18,23 +18,31 @@ class TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isIncome = transaction.type == TransactionType.income;
-    final color = isIncome
+
+    final accentColor = isIncome
         ? const Color(0xFF2E7D32) // Green 800
         : const Color(0xFFC62828); // Red 800
+
+    // Icon bg: di dark mode pakai versi lebih gelap agar tidak "blinding"
     final bgColor = isIncome
-        ? const Color(0xFFE8F5E9) // Green 50
-        : const Color(0xFFFFEBEE); // Red 50
+        ? (isDark ? const Color(0xFF1B3A1E) : const Color(0xFFE8F5E9))
+        : (isDark ? const Color(0xFF3A1A1A) : const Color(0xFFFFEBEE));
+
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor =
+        isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
+    final titleColor = isDark ? Colors.white : const Color(0xFF212121);
+    final subtitleColor =
+        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
 
     return Card(
       elevation: 0,
-      color: Colors.white,
+      color: cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(
-          color: Colors.grey.shade100,
-          width: 1,
-        ),
+        side: BorderSide(color: borderColor, width: 1),
       ),
       margin: const EdgeInsets.only(bottom: 10),
       child: InkWell(
@@ -57,7 +65,7 @@ class TransactionTile extends StatelessWidget {
                   isIncome
                       ? Icons.arrow_upward_rounded
                       : Icons.arrow_downward_rounded,
-                  color: color,
+                  color: accentColor,
                   size: 20,
                 ),
               ),
@@ -73,7 +81,7 @@ class TransactionTile extends StatelessWidget {
                       style: GoogleFonts.poppins(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF212121),
+                        color: titleColor,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -83,7 +91,7 @@ class TransactionTile extends StatelessWidget {
                       formatDate(transaction.createdAt),
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: const Color(0xFF9E9E9E),
+                        color: subtitleColor,
                       ),
                     ),
                   ],
@@ -96,7 +104,7 @@ class TransactionTile extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: color,
+                  color: accentColor,
                 ),
               ),
             ],

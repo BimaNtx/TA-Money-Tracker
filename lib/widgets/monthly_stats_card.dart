@@ -72,6 +72,21 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final cardBorder =
+        isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF0F0F0);
+    final titleColor =
+        isDark ? Colors.white : const Color(0xFF212121);
+    final subColor =
+        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+    final dividerColor =
+        isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF5F5F5);
+    final selisihLabelColor =
+        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF757575);
+    final emptyTextColor =
+        isDark ? const Color(0xFF555555) : const Color(0xFFBDBDBD);
+
     final total = widget.monthlyIncome + widget.monthlyExpense;
     final incomePercent = total > 0
         ? (widget.monthlyIncome / total * 100).toStringAsFixed(0)
@@ -83,12 +98,12 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFF0F0F0)),
+        border: Border.all(color: cardBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -123,7 +138,7 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF212121),
+                        color: titleColor,
                       ),
                     ),
                     // Navigasi bulan: panah kiri — label — panah kanan
@@ -224,7 +239,7 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: _touchedIndex == null
-                                  ? const Color(0xFF212121)
+                                  ? titleColor
                                   : _touchedIndex == 0
                                       ? _kIncomeColor
                                       : _kExpenseColor,
@@ -238,7 +253,7 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                                     : 'Keluar',
                             style: GoogleFonts.poppins(
                               fontSize: 9,
-                              color: const Color(0xFF9E9E9E),
+                              color: subColor,
                             ),
                           ),
                         ],
@@ -248,7 +263,7 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                         'Kosong',
                         style: GoogleFonts.poppins(
                           fontSize: 10,
-                          color: const Color(0xFFBDBDBD),
+                          color: emptyTextColor,
                         ),
                       ),
                   ],
@@ -283,7 +298,7 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                       // Divider tipis
                       Container(
                         height: 1,
-                        color: const Color(0xFFF5F5F5),
+                        color: dividerColor,
                       ),
                       const SizedBox(height: 10),
                       // Net balance bulan ini
@@ -293,7 +308,7 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                             'Selisih',
                             style: GoogleFonts.poppins(
                               fontSize: 11,
-                              color: const Color(0xFF757575),
+                              color: selisihLabelColor,
                             ),
                           ),
                           const Spacer(),
@@ -326,7 +341,7 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                   'Belum ada transaksi bulan ini',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
-                    color: const Color(0xFFBDBDBD),
+                    color: emptyTextColor,
                   ),
                 ),
               ),
