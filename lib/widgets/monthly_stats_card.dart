@@ -8,17 +8,21 @@ const _kIncomeColor = Color(0xFF26A69A); // Teal — pemasukan
 const _kExpenseColor = Color(0xFFEF5350); // Red — pengeluaran
 const _kNeutralColor = Color(0xFFE0E0E0); // Abu — state kosong
 
-/// Card visualisasi statistik keuangan bulan berjalan menggunakan Donut Chart.
+/// Card visualisasi statistik keuangan bulanan menggunakan Donut Chart.
 class MonthlyStatsCard extends StatefulWidget {
   final int monthlyIncome;
   final int monthlyExpense;
   final String monthLabel; // Contoh: "Mei 2026"
+  final VoidCallback? onPreviousMonth;
+  final VoidCallback? onNextMonth;
 
   const MonthlyStatsCard({
     super.key,
     required this.monthlyIncome,
     required this.monthlyExpense,
     required this.monthLabel,
+    this.onPreviousMonth,
+    this.onNextMonth,
   });
 
   @override
@@ -95,6 +99,7 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
         children: [
           // Header
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                 padding: const EdgeInsets.all(7),
@@ -109,25 +114,62 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                 ),
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Statistik Bulan Ini',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF212121),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Statistik Bulanan',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF212121),
+                      ),
                     ),
-                  ),
-                  Text(
-                    widget.monthLabel,
-                    style: GoogleFonts.poppins(
-                      fontSize: 11,
-                      color: const Color(0xFF9E9E9E),
+                    // Navigasi bulan: panah kiri — label — panah kanan
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 26,
+                          height: 26,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            splashRadius: 16,
+                            icon: const Icon(
+                              Icons.chevron_left,
+                              size: 20,
+                              color: Color(0xFF009688),
+                            ),
+                            onPressed: widget.onPreviousMonth,
+                          ),
+                        ),
+                        Text(
+                          widget.monthLabel,
+                          style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF009688),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 26,
+                          height: 26,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            splashRadius: 16,
+                            icon: const Icon(
+                              Icons.chevron_right,
+                              size: 20,
+                              color: Color(0xFF009688),
+                            ),
+                            onPressed: widget.onNextMonth,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -275,7 +317,7 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
             ],
           ),
 
-          // Pesan kosong di bawah chart jika belum ada data bulan ini
+          // Pesan kosong di bawah chart jika belum ada data bulan terpilih
           if (!_hasData)
             Padding(
               padding: const EdgeInsets.only(top: 12),

@@ -8,7 +8,7 @@ import '../widgets/monthly_stats_card.dart';
 import '../widgets/transaction_tile.dart';
 
 /// Halaman utama (Tab 0) — saldo, statistik bulanan, dan 5 transaksi terakhir
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final List<Transaction> transactions;
   final VoidCallback? onViewAll;
 
@@ -19,34 +19,60 @@ class HomeScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
+  DateTime _selectedMonth = DateTime.now();
+
+  void _previousMonth() {
+    setState(() {
+      _selectedMonth = DateTime(
+        _selectedMonth.year,
+        _selectedMonth.month - 1,
+      );
+    });
+  }
+
+  void _nextMonth() {
+    setState(() {
+      _selectedMonth = DateTime(
+        _selectedMonth.year,
+        _selectedMonth.month + 1,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // ── Total keseluruhan (untuk BalanceCard) ──────────────────────────────
-    final totalIncome = transactions
+    final totalIncome = widget.transactions
         .where((t) => t.type == TransactionType.income)
         .fold<int>(0, (sum, t) => sum + t.amount);
-    final totalExpense = transactions
+    final totalExpense = widget.transactions
         .where((t) => t.type == TransactionType.expense)
         .fold<int>(0, (sum, t) => sum + t.amount);
     final totalBalance = totalIncome - totalExpense;
 
-    // ── Filter bulan berjalan (untuk MonthlyStatsCard) ─────────────────────
-    final thisMonthTx = transactions.where(
-      (t) => t.createdAt.year == now.year && t.createdAt.month == now.month,
+    // ── Filter bulan terpilih (untuk MonthlyStatsCard) ─────────────────────
+    final selectedMonthTx = widget.transactions.where(
+      (t) =>
+          t.createdAt.year == _selectedMonth.year &&
+          t.createdAt.month == _selectedMonth.month,
     );
-    final monthlyIncome = thisMonthTx
+    final monthlyIncome = selectedMonthTx
         .where((t) => t.type == TransactionType.income)
         .fold<int>(0, (sum, t) => sum + t.amount);
-    final monthlyExpense = thisMonthTx
+    final monthlyExpense = selectedMonthTx
         .where((t) => t.type == TransactionType.expense)
         .fold<int>(0, (sum, t) => sum + t.amount);
 
     // Label bulan dalam Bahasa Indonesia (menggunakan intl)
-    final monthLabel = DateFormat('MMMM yyyy', 'id_ID').format(now);
+    final monthLabel =
+        DateFormat('MMMM yyyy', 'id_ID').format(_selectedMonth);
 
     // ── 5 transaksi terakhir ───────────────────────────────────────────────
-    final recentTransactions = List<Transaction>.from(transactions)
+    final recentTransactions = List<Transaction>.from(widget.transactions)
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     final displayList = recentTransactions.take(5).toList();
 
@@ -102,11 +128,13 @@ class HomeScreen extends StatelessWidget {
                       ),
                   const SizedBox(height: 16),
 
-                  // ── Monthly Stats Card (BARU) ─────────────────────────
+                  // ── Monthly Stats Card ────────────────────────────────
                   MonthlyStatsCard(
                     monthlyIncome: monthlyIncome,
                     monthlyExpense: monthlyExpense,
                     monthLabel: monthLabel,
+                    onPreviousMonth: _previousMonth,
+                    onNextMonth: _nextMonth,
                   )
                       .animate()
                       .fade(duration: 500.ms, delay: 250.ms)
@@ -131,9 +159,9 @@ class HomeScreen extends StatelessWidget {
                           color: const Color(0xFF212121),
                         ),
                       ),
-                      if (transactions.length > 5)
+                      if (widget.transactions.length > 5)
                         TextButton(
-                          onPressed: onViewAll,
+                          onPressed: widget.onViewAll,
                           child: Text(
                             'Lihat Semua',
                             style: GoogleFonts.poppins(
