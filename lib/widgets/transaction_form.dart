@@ -32,6 +32,7 @@ class _TransactionFormState extends State<TransactionForm> {
   late TextEditingController _descriptionController;
   late String _selectedCategory;
   final _formKey = GlobalKey<FormState>();
+  final FocusNode _keteranganFocusNode = FocusNode();
 
   bool get isEditMode => widget.existingTransaction != null;
 
@@ -63,6 +64,7 @@ class _TransactionFormState extends State<TransactionForm> {
   void dispose() {
     _amountController.dispose();
     _descriptionController.dispose();
+    _keteranganFocusNode.dispose();
     super.dispose();
   }
 
@@ -108,8 +110,6 @@ class _TransactionFormState extends State<TransactionForm> {
         isDark ? const Color(0xFF555555) : Colors.grey.shade400;
     final segmentUnselectedBg =
         isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50;
-    final dropdownBorder =
-        isDark ? const Color(0xFF3A3A3A) : Colors.grey.shade200;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -212,7 +212,7 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
               const SizedBox(height: 20),
 
-              // ── Dropdown Kategori ─────────────────────────────────────────
+              // ── Pilihan Kategori (ChoiceChip) ─────────────────────────
               Text(
                 'Kategori',
                 style: GoogleFonts.poppins(
@@ -221,56 +221,60 @@ class _TransactionFormState extends State<TransactionForm> {
                   color: labelColor,
                 ),
               ),
-              const SizedBox(height: 6),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedCategory,
-                dropdownColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: fillColor,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(color: dropdownBorder, width: 1),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(color: dropdownBorder, width: 1),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide:
-                        const BorderSide(color: primaryColor, width: 1.5),
-                  ),
-                ),
-                icon: Icon(Icons.keyboard_arrow_down_rounded, color: labelColor),
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: inputTextColor,
-                ),
-                items: _categories.map((cat) {
-                  return DropdownMenuItem<String>(
-                    value: cat,
-                    child: Row(
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: _categories.map((String category) {
+                  final bool isSelected = _selectedCategory == category;
+                  final accentColor = _selectedType == TransactionType.income
+                      ? incomeColor
+                      : expenseColor;
+                  return ChoiceChip(
+                    label: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          categoryIcon(cat),
-                          size: 18,
-                          color: _selectedType == TransactionType.income
-                              ? incomeColor
-                              : expenseColor,
+                          categoryIcon(category),
+                          size: 15,
+                          color: isSelected ? accentColor : labelColor,
                         ),
-                        const SizedBox(width: 10),
-                        Text(cat),
+                        const SizedBox(width: 5),
+                        Text(
+                          category,
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                            color: isSelected ? accentColor : labelColor,
+                          ),
+                        ),
                       ],
                     ),
+                    selected: isSelected,
+                    selectedColor: accentColor.withValues(alpha: 0.12),
+                    backgroundColor:
+                        isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50,
+                    side: BorderSide(
+                      color: isSelected
+                          ? accentColor.withValues(alpha: 0.5)
+                          : (isDark
+                              ? const Color(0xFF3A3A3A)
+                              : Colors.grey.shade300),
+                      width: 1,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    showCheckmark: false,
+                    onSelected: (bool selected) {
+                      if (selected) {
+                        setState(() => _selectedCategory = category);
+                      }
+                    },
                   );
                 }).toList(),
-                onChanged: (value) {
-                  if (value != null) setState(() => _selectedCategory = value);
-                },
               ),
               const SizedBox(height: 20),
 
@@ -286,7 +290,10 @@ class _TransactionFormState extends State<TransactionForm> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _amountController,
+                autofocus: true,
+                textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
+                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_keteranganFocusNode),
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 style: GoogleFonts.poppins(
                   fontSize: 24,
@@ -377,7 +384,9 @@ class _TransactionFormState extends State<TransactionForm> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _descriptionController,
+                focusNode: _keteranganFocusNode,
                 textCapitalization: TextCapitalization.sentences,
+                textInputAction: TextInputAction.done,
                 style: GoogleFonts.poppins(
                   fontSize: 15,
                   color: inputTextColor,
