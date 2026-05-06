@@ -76,6 +76,7 @@ class _TransactionFormState extends State<TransactionForm> {
 
   void _handleSave() {
     if (_formKey.currentState!.validate()) {
+      HapticFeedback.lightImpact();
       final amount = int.parse(_amountController.text.replaceAll('.', ''));
       widget.onSave(
         _selectedType,
@@ -119,285 +120,321 @@ class _TransactionFormState extends State<TransactionForm> {
       ),
       child: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Handle bar
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: handleColor,
-                  borderRadius: BorderRadius.circular(2),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: handleColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  isEditMode ? 'Edit Transaksi' : 'Tambah Transaksi',
-                  style: GoogleFonts.poppins(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: titleColor,
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    isEditMode ? 'Edit Transaksi' : 'Tambah Transaksi',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: titleColor,
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: isDark ? Colors.white : Colors.black87,
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                    style: IconButton.styleFrom(
+                      backgroundColor: closeBtnBg,
+                    ),
                   ),
-                  style: IconButton.styleFrom(
-                    backgroundColor: closeBtnBg,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
+                ],
+              ),
+              const SizedBox(height: 20),
 
-            // Tipe toggle: Pemasukan / Pengeluaran
-            SegmentedButton<TransactionType>(
-              segments: [
-                ButtonSegment<TransactionType>(
-                  value: TransactionType.income,
-                  label: Text(
-                    'Pemasukan',
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+              // Tipe toggle: Pemasukan / Pengeluaran
+              SegmentedButton<TransactionType>(
+                segments: [
+                  ButtonSegment<TransactionType>(
+                    value: TransactionType.income,
+                    label: Text(
+                      'Pemasukan',
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                    ),
+                    icon: const Icon(Icons.arrow_upward_rounded, size: 18),
                   ),
-                  icon: const Icon(Icons.arrow_upward_rounded, size: 18),
-                ),
-                ButtonSegment<TransactionType>(
-                  value: TransactionType.expense,
-                  label: Text(
-                    'Pengeluaran',
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                  ButtonSegment<TransactionType>(
+                    value: TransactionType.expense,
+                    label: Text(
+                      'Pengeluaran',
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+                    ),
+                    icon: const Icon(Icons.arrow_downward_rounded, size: 18),
                   ),
-                  icon: const Icon(Icons.arrow_downward_rounded, size: 18),
-                ),
-              ],
-              selected: {_selectedType},
-              onSelectionChanged: _onTypeChanged,
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return _selectedType == TransactionType.income
-                        ? incomeColor.withValues(alpha: 0.12)
-                        : expenseColor.withValues(alpha: 0.12);
-                  }
-                  return segmentUnselectedBg;
-                }),
-                foregroundColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return _selectedType == TransactionType.income
-                        ? incomeColor
-                        : expenseColor;
-                  }
-                  return labelColor;
-                }),
-                side: WidgetStateProperty.all(BorderSide.none),
-                shape: WidgetStateProperty.all(
-                  RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                ],
+                selected: {_selectedType},
+                onSelectionChanged: _onTypeChanged,
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return _selectedType == TransactionType.income
+                          ? incomeColor.withValues(alpha: 0.12)
+                          : expenseColor.withValues(alpha: 0.12);
+                    }
+                    return segmentUnselectedBg;
+                  }),
+                  foregroundColor: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.selected)) {
+                      return _selectedType == TransactionType.income
+                          ? incomeColor
+                          : expenseColor;
+                    }
+                    return labelColor;
+                  }),
+                  side: WidgetStateProperty.all(BorderSide.none),
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // ── Dropdown Kategori ─────────────────────────────────────────
-            Text(
-              'Kategori',
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: labelColor,
-              ),
-            ),
-            const SizedBox(height: 6),
-            DropdownButtonFormField<String>(
-              initialValue: _selectedCategory,
-              dropdownColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: fillColor,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: dropdownBorder, width: 1),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide(color: dropdownBorder, width: 1),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide:
-                      const BorderSide(color: primaryColor, width: 1.5),
-                ),
-              ),
-              icon: Icon(Icons.keyboard_arrow_down_rounded, color: labelColor),
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: inputTextColor,
-              ),
-              items: _categories.map((cat) {
-                return DropdownMenuItem<String>(
-                  value: cat,
-                  child: Row(
-                    children: [
-                      Icon(
-                        categoryIcon(cat),
-                        size: 18,
-                        color: _selectedType == TransactionType.income
-                            ? incomeColor
-                            : expenseColor,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(cat),
-                    ],
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) setState(() => _selectedCategory = value);
-              },
-            ),
-            const SizedBox(height: 20),
-
-            // Input nominal
-            Text(
-              'Nominal',
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: labelColor,
-              ),
-            ),
-            const SizedBox(height: 6),
-            TextFormField(
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: inputTextColor,
-              ),
-              decoration: InputDecoration(
-                prefixText: 'Rp  ',
-                prefixStyle: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
+              // ── Dropdown Kategori ─────────────────────────────────────────
+              Text(
+                'Kategori',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
                   color: labelColor,
                 ),
-                hintText: '0',
-                hintStyle: GoogleFonts.poppins(
+              ),
+              const SizedBox(height: 6),
+              DropdownButtonFormField<String>(
+                initialValue: _selectedCategory,
+                dropdownColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: fillColor,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: dropdownBorder, width: 1),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: dropdownBorder, width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide:
+                        const BorderSide(color: primaryColor, width: 1.5),
+                  ),
+                ),
+                icon: Icon(Icons.keyboard_arrow_down_rounded, color: labelColor),
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: inputTextColor,
+                ),
+                items: _categories.map((cat) {
+                  return DropdownMenuItem<String>(
+                    value: cat,
+                    child: Row(
+                      children: [
+                        Icon(
+                          categoryIcon(cat),
+                          size: 18,
+                          color: _selectedType == TransactionType.income
+                              ? incomeColor
+                              : expenseColor,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(cat),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) setState(() => _selectedCategory = value);
+                },
+              ),
+              const SizedBox(height: 20),
+
+              // Input nominal
+              Text(
+                'Nominal',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: labelColor,
+                ),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  color: hintColor,
+                  color: inputTextColor,
                 ),
-                filled: true,
-                fillColor: fillColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide:
-                      const BorderSide(color: primaryColor, width: 1.5),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) return 'Masukkan nominal';
-                final parsed = int.tryParse(value.replaceAll('.', ''));
-                if (parsed == null || parsed <= 0) {
-                  return 'Nominal harus lebih dari 0';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 20),
-
-            // Input keterangan
-            Text(
-              'Keterangan',
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: labelColor,
-              ),
-            ),
-            const SizedBox(height: 6),
-            TextFormField(
-              controller: _descriptionController,
-              textCapitalization: TextCapitalization.sentences,
-              style: GoogleFonts.poppins(
-                fontSize: 15,
-                color: inputTextColor,
-              ),
-              decoration: InputDecoration(
-                hintText: 'Contoh: Beli cilok',
-                hintStyle: GoogleFonts.poppins(
-                  fontSize: 15,
-                  color: descHintColor,
-                ),
-                filled: true,
-                fillColor: fillColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide:
-                      const BorderSide(color: primaryColor, width: 1.5),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Masukkan keterangan';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 28),
-
-            // Tombol Simpan
-            SizedBox(
-              height: 52,
-              child: ElevatedButton(
-                onPressed: _handleSave,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
+                decoration: InputDecoration(
+                  prefixText: 'Rp  ',
+                  prefixStyle: GoogleFonts.poppins(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: labelColor,
+                  ),
+                  hintText: '0',
+                  hintStyle: GoogleFonts.poppins(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: hintColor,
+                  ),
+                  filled: true,
+                  fillColor: fillColor,
+                  border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide.none,
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide:
+                        const BorderSide(color: primaryColor, width: 1.5),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 ),
-                child: Text(
-                  'Simpan',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                validator: (value) {
+                  if (value == null || value.isEmpty) return 'Masukkan nominal';
+                  final parsed = int.tryParse(value.replaceAll('.', ''));
+                  if (parsed == null || parsed <= 0) {
+                    return 'Nominal harus lebih dari 0';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              // ── Tombol Input Nominal Cepat ───────────────────────────────
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: [10000, 20000, 50000, 100000].map((nominal) {
+                  return ActionChip(
+                    label: Text(
+                      nominal >= 1000 ? '${nominal ~/ 1000}k' : nominal.toString(),
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? const Color(0xFFE0E0E0) : const Color(0xFF616161),
+                      ),
+                    ),
+                    backgroundColor: isDark ? const Color(0xFF333333) : Colors.grey.shade100,
+                    side: BorderSide(
+                      color: isDark ? const Color(0xFF444444) : Colors.grey.shade300,
+                      width: 1,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      setState(() {
+                        // format angka bisa diatur tapi controller kita minta raw digit 
+                        // karena filtering formatter atau kalau mau dengan format
+                        _amountController.text = nominal.toString();
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+
+              // Input keterangan
+              Text(
+                'Keterangan',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: labelColor,
+                ),
+              ),
+              const SizedBox(height: 6),
+              TextFormField(
+                controller: _descriptionController,
+                textCapitalization: TextCapitalization.sentences,
+                style: GoogleFonts.poppins(
+                  fontSize: 15,
+                  color: inputTextColor,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Contoh: Beli cilok',
+                  hintStyle: GoogleFonts.poppins(
+                    fontSize: 15,
+                    color: descHintColor,
+                  ),
+                  filled: true,
+                  fillColor: fillColor,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide:
+                        const BorderSide(color: primaryColor, width: 1.5),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Masukkan keterangan';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 28),
+
+              // Tombol Simpan
+              SizedBox(
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: _handleSave,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: Text(
+                    'Simpan',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
