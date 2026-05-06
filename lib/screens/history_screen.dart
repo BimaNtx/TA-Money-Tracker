@@ -261,40 +261,104 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
           ),
           confirmDismiss: (_) async {
+            final isDark =
+                Theme.of(context).brightness == Brightness.dark;
+            final dialogBg =
+                isDark ? const Color(0xFF1E1E1E) : Colors.white;
+            final titleColor =
+                isDark ? Colors.white : const Color(0xFF212121);
+            final contentColor =
+                isDark ? const Color(0xFFAAAAAA) : const Color(0xFF5A5A5A);
+
             return await showDialog<bool>(
               context: context,
               builder: (ctx) => AlertDialog(
+                backgroundColor: dialogBg,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(20)),
+                // Ikon peringatan di atas judul
+                icon: Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFC62828).withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Color(0xFFC62828),
+                    size: 28,
+                  ),
+                ),
                 title: Text(
                   'Hapus Transaksi?',
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 17,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
+                    color: titleColor,
                   ),
                 ),
                 content: Text(
-                  'Yakin ingin menghapus transaksi ini?',
-                  style: GoogleFonts.poppins(fontSize: 14),
+                  'Apakah kamu yakin ingin menghapus transaksi ini?\nData yang dihapus tidak dapat dikembalikan.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    height: 1.5,
+                    color: contentColor,
+                  ),
                 ),
+                actionsAlignment: MainAxisAlignment.spaceEvenly,
+                actionsPadding:
+                    const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, false),
-                    child: Text(
-                      'Batal',
-                      style: GoogleFonts.poppins(
-                        color: const Color(0xFF757575),
-                        fontWeight: FontWeight.w500,
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      style: OutlinedButton.styleFrom(
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 12),
+                        side: BorderSide(
+                          color: isDark
+                              ? const Color(0xFF3A3A3A)
+                              : Colors.grey.shade300,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'Batal',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: isDark
+                              ? const Color(0xFFAAAAAA)
+                              : const Color(0xFF757575),
+                        ),
                       ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, true),
-                    child: Text(
-                      'Hapus',
-                      style: GoogleFonts.poppins(
-                        color: const Color(0xFFC62828),
-                        fontWeight: FontWeight.w600,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFC62828),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'Hapus',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

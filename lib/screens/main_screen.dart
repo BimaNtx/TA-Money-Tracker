@@ -60,9 +60,12 @@ class _MainScreenState extends State<MainScreen> {
         SnackBar(
           content: Text(
             '"${transaction.description}" berhasil dihapus',
-            style: GoogleFonts.poppins(fontSize: 13),
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              color: Theme.of(context).colorScheme.onInverseSurface,
+            ),
           ),
-          backgroundColor: const Color(0xFF212121),
+          backgroundColor: Theme.of(context).colorScheme.inverseSurface,
           behavior: SnackBarBehavior.floating,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
