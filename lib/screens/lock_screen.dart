@@ -32,16 +32,16 @@ class _LockScreenState extends State<LockScreen>
       vsync: this,
       duration: const Duration(milliseconds: 450),
     );
-    _shakeAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0, end: -14), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: -14, end: 14), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: 14, end: -10), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: -10, end: 10), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: 10, end: 0), weight: 1),
-    ]).animate(CurvedAnimation(
-      parent: _shakeController,
-      curve: Curves.easeInOut,
-    ));
+    _shakeAnimation =
+        TweenSequence<double>([
+          TweenSequenceItem(tween: Tween(begin: 0, end: -14), weight: 1),
+          TweenSequenceItem(tween: Tween(begin: -14, end: 14), weight: 2),
+          TweenSequenceItem(tween: Tween(begin: 14, end: -10), weight: 2),
+          TweenSequenceItem(tween: Tween(begin: -10, end: 10), weight: 2),
+          TweenSequenceItem(tween: Tween(begin: 10, end: 0), weight: 1),
+        ]).animate(
+          CurvedAnimation(parent: _shakeController, curve: Curves.easeInOut),
+        );
 
     // Panggil otentikasi otomatis dengan sedikit delay agar UI sudah ter-render
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -99,7 +99,8 @@ class _LockScreenState extends State<LockScreen>
     } else if (!authenticated && mounted && _errorMessage == null) {
       // Pengguna membatalkan — tetap di lock screen
       setState(() {
-        _errorMessage = 'Otentikasi dibatalkan. Tekan tombol untuk mencoba lagi.';
+        _errorMessage =
+            'Otentikasi dibatalkan. Tekan tombol untuk mencoba lagi.';
       });
     }
   }
@@ -153,11 +154,7 @@ class _LockScreenState extends State<LockScreen>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF0A0E1A),
-                Color(0xFF0D1B2A),
-                Color(0xFF0A1628),
-              ],
+              colors: [Color(0xFF0A0E1A), Color(0xFF0D1B2A), Color(0xFF0A1628)],
               stops: [0.0, 0.55, 1.0],
             ),
           ),
@@ -271,10 +268,7 @@ class _LockScreenState extends State<LockScreen>
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-      ),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60),
         child: const SizedBox.expand(),
@@ -369,21 +363,22 @@ class _LockScreenState extends State<LockScreen>
       height: 56,
       child: ElevatedButton(
         onPressed: _isAuthenticating ? null : _authenticate,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: Colors.transparent,
-          elevation: 0,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ).copyWith(
-          // Gunakan overlay gradient menggunakan Ink
-          overlayColor: WidgetStateProperty.all(
-            Colors.white.withValues(alpha: 0.08),
-          ),
-        ),
+        style:
+            ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.white,
+              disabledBackgroundColor: Colors.transparent,
+              elevation: 0,
+              padding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ).copyWith(
+              // Gunakan overlay gradient menggunakan Ink
+              overlayColor: WidgetStateProperty.all(
+                Colors.white.withValues(alpha: 0.08),
+              ),
+            ),
         child: Ink(
           decoration: BoxDecoration(
             gradient: _isAuthenticating

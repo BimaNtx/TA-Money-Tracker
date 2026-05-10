@@ -14,7 +14,8 @@ class TransactionForm extends StatefulWidget {
     int amount,
     String description,
     String category,
-  ) onSave;
+  )
+  onSave;
 
   const TransactionForm({
     super.key,
@@ -44,8 +45,7 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   void initState() {
     super.initState();
-    _selectedType =
-        widget.existingTransaction?.type ?? TransactionType.expense;
+    _selectedType = widget.existingTransaction?.type ?? TransactionType.expense;
     _amountController = TextEditingController(
       text: widget.existingTransaction?.amount.toString() ?? '',
     );
@@ -54,8 +54,8 @@ class _TransactionFormState extends State<TransactionForm> {
     );
     // Inisialisasi kategori: pakai data lama, atau default pertama dari list
     final existingCategory = widget.existingTransaction?.category;
-    _selectedCategory = (existingCategory != null &&
-            _categories.contains(existingCategory))
+    _selectedCategory =
+        (existingCategory != null && _categories.contains(existingCategory))
         ? existingCategory
         : _categories.last; // fallback ke 'Lainnya'
   }
@@ -98,18 +98,20 @@ class _TransactionFormState extends State<TransactionForm> {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleColor = isDark ? Colors.white : const Color(0xFF212121);
-    final labelColor =
-        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF757575);
+    final labelColor = isDark
+        ? const Color(0xFFAAAAAA)
+        : const Color(0xFF757575);
     final inputTextColor = isDark ? Colors.white : const Color(0xFF212121);
     final fillColor = isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50;
     final handleColor = isDark ? const Color(0xFF444444) : Colors.grey.shade300;
     final closeBtnBg = isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100;
-    final hintColor =
-        isDark ? const Color(0xFF555555) : Colors.grey.shade300;
-    final descHintColor =
-        isDark ? const Color(0xFF555555) : Colors.grey.shade400;
-    final segmentUnselectedBg =
-        isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50;
+    final hintColor = isDark ? const Color(0xFF555555) : Colors.grey.shade300;
+    final descHintColor = isDark
+        ? const Color(0xFF555555)
+        : Colors.grey.shade400;
+    final segmentUnselectedBg = isDark
+        ? const Color(0xFF2A2A2A)
+        : Colors.grey.shade50;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -156,9 +158,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       Icons.close_rounded,
                       color: isDark ? Colors.white : Colors.black87,
                     ),
-                    style: IconButton.styleFrom(
-                      backgroundColor: closeBtnBg,
-                    ),
+                    style: IconButton.styleFrom(backgroundColor: closeBtnBg),
                   ),
                 ],
               ),
@@ -206,7 +206,8 @@ class _TransactionFormState extends State<TransactionForm> {
                   side: WidgetStateProperty.all(BorderSide.none),
                   shape: WidgetStateProperty.all(
                     RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -254,14 +255,15 @@ class _TransactionFormState extends State<TransactionForm> {
                     ),
                     selected: isSelected,
                     selectedColor: accentColor.withValues(alpha: 0.12),
-                    backgroundColor:
-                        isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50,
+                    backgroundColor: isDark
+                        ? const Color(0xFF2A2A2A)
+                        : Colors.grey.shade50,
                     side: BorderSide(
                       color: isSelected
                           ? accentColor.withValues(alpha: 0.5)
                           : (isDark
-                              ? const Color(0xFF3A3A3A)
-                              : Colors.grey.shade300),
+                                ? const Color(0xFF3A3A3A)
+                                : Colors.grey.shade300),
                       width: 1,
                     ),
                     shape: RoundedRectangleBorder(
@@ -293,7 +295,8 @@ class _TransactionFormState extends State<TransactionForm> {
                 autofocus: true,
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
-                onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_keteranganFocusNode),
+                onFieldSubmitted: (_) =>
+                    FocusScope.of(context).requestFocus(_keteranganFocusNode),
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 style: GoogleFonts.poppins(
                   fontSize: 24,
@@ -321,11 +324,15 @@ class _TransactionFormState extends State<TransactionForm> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
-                    borderSide:
-                        const BorderSide(color: primaryColor, width: 1.5),
+                    borderSide: const BorderSide(
+                      color: primaryColor,
+                      width: 1.5,
+                    ),
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'Masukkan nominal';
@@ -344,16 +351,24 @@ class _TransactionFormState extends State<TransactionForm> {
                 children: [10000, 20000, 50000, 100000].map((nominal) {
                   return ActionChip(
                     label: Text(
-                      nominal >= 1000 ? '${nominal ~/ 1000}k' : nominal.toString(),
+                      nominal >= 1000
+                          ? '${nominal ~/ 1000}k'
+                          : nominal.toString(),
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: isDark ? const Color(0xFFE0E0E0) : const Color(0xFF616161),
+                        color: isDark
+                            ? const Color(0xFFE0E0E0)
+                            : const Color(0xFF616161),
                       ),
                     ),
-                    backgroundColor: isDark ? const Color(0xFF333333) : Colors.grey.shade100,
+                    backgroundColor: isDark
+                        ? const Color(0xFF333333)
+                        : Colors.grey.shade100,
                     side: BorderSide(
-                      color: isDark ? const Color(0xFF444444) : Colors.grey.shade300,
+                      color: isDark
+                          ? const Color(0xFF444444)
+                          : Colors.grey.shade300,
                       width: 1,
                     ),
                     shape: RoundedRectangleBorder(
@@ -362,7 +377,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     onPressed: () {
                       HapticFeedback.lightImpact();
                       setState(() {
-                        // format angka bisa diatur tapi controller kita minta raw digit 
+                        // format angka bisa diatur tapi controller kita minta raw digit
                         // karena filtering formatter atau kalau mau dengan format
                         _amountController.text = nominal.toString();
                       });
@@ -387,10 +402,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 focusNode: _keteranganFocusNode,
                 textCapitalization: TextCapitalization.sentences,
                 textInputAction: TextInputAction.done,
-                style: GoogleFonts.poppins(
-                  fontSize: 15,
-                  color: inputTextColor,
-                ),
+                style: GoogleFonts.poppins(fontSize: 15, color: inputTextColor),
                 decoration: InputDecoration(
                   hintText: 'Contoh: Beli cilok',
                   hintStyle: GoogleFonts.poppins(
@@ -405,11 +417,15 @@ class _TransactionFormState extends State<TransactionForm> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
-                    borderSide:
-                        const BorderSide(color: primaryColor, width: 1.5),
+                    borderSide: const BorderSide(
+                      color: primaryColor,
+                      width: 1.5,
+                    ),
                   ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {

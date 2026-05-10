@@ -37,8 +37,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SnackBar(
               content: Row(
                 children: [
-                  const Icon(Icons.info_outline_rounded,
-                      color: Colors.white, size: 20),
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   const SizedBox(width: 10),
                   Text(
                     'Belum ada data transaksi untuk diekspor.',
@@ -49,7 +52,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               backgroundColor: const Color(0xFF5C6BC0),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
               margin: const EdgeInsets.all(16),
             ),
           );
@@ -86,18 +90,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await file.writeAsString(csvString);
 
       // Bagikan file menggunakan share_plus
-      await Share.shareXFiles(
-        [XFile(filePath, mimeType: 'text/csv')],
-        subject: 'Laporan Keuangan - Money Tracker',
-      );
+      await Share.shareXFiles([
+        XFile(filePath, mimeType: 'text/csv'),
+      ], subject: 'Laporan Keuangan - Money Tracker');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.check_circle_outline_rounded,
-                    color: Colors.white, size: 20),
+                const Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 const SizedBox(width: 10),
                 Text(
                   'Laporan CSV berhasil diekspor!',
@@ -107,8 +113,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             backgroundColor: const Color(0xFF009688),
             behavior: SnackBarBehavior.floating,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             margin: const EdgeInsets.all(16),
           ),
         );
@@ -119,8 +126,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SnackBar(
             content: Row(
               children: [
-                const Icon(Icons.error_outline_rounded,
-                    color: Colors.white, size: 20),
+                const Icon(
+                  Icons.error_outline_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -134,8 +144,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             backgroundColor: const Color(0xFFE53935),
             behavior: SnackBarBehavior.floating,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             margin: const EdgeInsets.all(16),
           ),
         );
@@ -153,12 +164,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isDarkMode =
         settingsBox.get('isDarkMode', defaultValue: false) as bool;
 
-    final titleColor =
-        isDark ? Colors.white : const Color(0xFF212121);
-    final subtitleColor =
-        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
-    final sectionHeaderColor =
-        isDark ? const Color(0xFFEEEEEE) : const Color(0xFF212121);
+    final titleColor = isDark ? Colors.white : const Color(0xFF212121);
+    final subtitleColor = isDark
+        ? const Color(0xFFAAAAAA)
+        : const Color(0xFF9E9E9E);
+    final sectionHeaderColor = isDark
+        ? const Color(0xFFEEEEEE)
+        : const Color(0xFF212121);
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -169,33 +181,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // Avatar — scale + fade dari tengah
             Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF4DB6AC), Color(0xFF00796B)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF009688).withValues(alpha: 0.25),
-                    blurRadius: 16,
-                    offset: const Offset(0, 6),
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF4DB6AC), Color(0xFF00796B)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF009688).withValues(alpha: 0.25),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: CircleAvatar(
-                radius: 48,
-                backgroundColor:
-                    isDark ? const Color(0xFF2A2A2A) : Colors.white,
-                child: const Icon(
-                  Icons.person_rounded,
-                  size: 48,
-                  color: Color(0xFF009688),
-                ),
-              ),
-            )
+                  child: CircleAvatar(
+                    radius: 48,
+                    backgroundColor: isDark
+                        ? const Color(0xFF2A2A2A)
+                        : Colors.white,
+                    child: const Icon(
+                      Icons.person_rounded,
+                      size: 48,
+                      color: Color(0xFF009688),
+                    ),
+                  ),
+                )
                 .animate()
                 .fade(duration: 500.ms)
                 .scale(
@@ -208,29 +221,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // Nama — fade + slideY
             Text(
-              'Bima Ananta',
-              style: GoogleFonts.poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-                color: titleColor,
-              ),
-            )
+                  'Bima Ananta',
+                  style: GoogleFonts.poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: titleColor,
+                  ),
+                )
                 .animate()
                 .fade(duration: 400.ms, delay: 150.ms)
-                .slideY(begin: 0.2, end: 0, delay: 150.ms, curve: Curves.easeOut),
+                .slideY(
+                  begin: 0.2,
+                  end: 0,
+                  delay: 150.ms,
+                  curve: Curves.easeOut,
+                ),
             const SizedBox(height: 4),
 
             // Keterangan kelas
             Text(
-              'Siswa RPL Kelas 11',
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: subtitleColor,
-              ),
-            )
+                  'Siswa RPL Kelas 11',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: subtitleColor,
+                  ),
+                )
                 .animate()
                 .fade(duration: 400.ms, delay: 220.ms)
-                .slideY(begin: 0.2, end: 0, delay: 220.ms, curve: Curves.easeOut),
+                .slideY(
+                  begin: 0.2,
+                  end: 0,
+                  delay: 220.ms,
+                  curve: Curves.easeOut,
+                ),
             const SizedBox(height: 32),
 
             // Section header — Tentang Aplikasi
@@ -309,10 +332,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // ── Toggle Dark Mode ──────────────────────────────────────────
             _buildDarkModeCard(
-              isDark: isDark,
-              isDarkMode: isDarkMode,
-              settingsBox: settingsBox,
-            )
+                  isDark: isDark,
+                  isDarkMode: isDarkMode,
+                  settingsBox: settingsBox,
+                )
                 .animate()
                 .fade(duration: 400.ms, delay: 700.ms)
                 .slideX(
@@ -363,9 +386,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
               ),
-            )
-                .animate()
-                .fade(duration: 400.ms, delay: 800.ms),
+            ).animate().fade(duration: 400.ms, delay: 800.ms),
           ],
         ),
       ),
@@ -379,12 +400,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required Box settingsBox,
   }) {
     final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final borderColor =
-        isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
-    final titleColor =
-        isDark ? Colors.white : const Color(0xFF212121);
-    final subtitleColor =
-        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+    final borderColor = isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
+    final titleColor = isDark ? Colors.white : const Color(0xFF212121);
+    final subtitleColor = isDark
+        ? const Color(0xFFAAAAAA)
+        : const Color(0xFF9E9E9E);
 
     return Card(
       elevation: 0,
@@ -400,8 +420,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 4,
+          ),
           secondary: Container(
             width: 42,
             height: 42,
@@ -425,10 +447,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           subtitle: Text(
             isDarkMode ? 'Aktif' : 'Nonaktif',
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              color: subtitleColor,
-            ),
+            style: GoogleFonts.poppins(fontSize: 12, color: subtitleColor),
           ),
           value: isDarkMode,
           activeThumbColor: const Color(0xFF009688),
@@ -444,12 +463,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   /// Card khusus untuk tombol Export CSV dengan indikator loading
   Widget _buildExportCard({required bool isDark}) {
     final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final borderColor =
-        isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
-    final titleColor =
-        isDark ? Colors.white : const Color(0xFF212121);
-    final subtitleColor =
-        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+    final borderColor = isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
+    final titleColor = isDark ? Colors.white : const Color(0xFF212121);
+    final subtitleColor = isDark
+        ? const Color(0xFFAAAAAA)
+        : const Color(0xFF9E9E9E);
 
     return Card(
       elevation: 0,
@@ -540,12 +558,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final borderColor =
-        isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
-    final titleColor =
-        isDark ? Colors.white : const Color(0xFF212121);
-    final subtitleColor =
-        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+    final borderColor = isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
+    final titleColor = isDark ? Colors.white : const Color(0xFF212121);
+    final subtitleColor = isDark
+        ? const Color(0xFFAAAAAA)
+        : const Color(0xFF9E9E9E);
 
     return Card(
       elevation: 0,
@@ -556,8 +573,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         leading: Container(
           width: 42,
           height: 42,
@@ -577,10 +593,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         subtitle: Text(
           subtitle,
-          style: GoogleFonts.poppins(
-            fontSize: 12,
-            color: subtitleColor,
-          ),
+          style: GoogleFonts.poppins(fontSize: 12, color: subtitleColor),
         ),
       ),
     );

@@ -8,7 +8,13 @@ enum TransactionType { income, expense }
 
 /// Daftar kategori untuk setiap tipe transaksi
 const incomeCategories = ['Gaji', 'Bonus', 'Lainnya'];
-const expenseCategories = ['Makan', 'Transport', 'Belanja', 'Hiburan', 'Lainnya'];
+const expenseCategories = [
+  'Makan',
+  'Transport',
+  'Belanja',
+  'Hiburan',
+  'Lainnya',
+];
 
 /// Model data untuk setiap transaksi keuangan
 @HiveType(typeId: 0)

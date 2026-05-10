@@ -33,11 +33,11 @@ class TransactionTile extends StatelessWidget {
         : (isDark ? const Color(0xFF3A1A1A) : const Color(0xFFFFEBEE));
 
     final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final borderColor =
-        isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
+    final borderColor = isDark ? const Color(0xFF2C2C2C) : Colors.grey.shade100;
     final titleColor = isDark ? Colors.white : const Color(0xFF212121);
-    final subtitleColor =
-        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+    final subtitleColor = isDark
+        ? const Color(0xFFAAAAAA)
+        : const Color(0xFF9E9E9E);
 
     // Ikon khusus per kategori
     final icon = categoryIcon(transaction.category);
@@ -66,11 +66,7 @@ class TransactionTile extends StatelessWidget {
                   color: bgColor,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  icon,
-                  color: accentColor,
-                  size: 22,
-                ),
+                child: Icon(icon, color: accentColor, size: 22),
               ),
               const SizedBox(width: 12),
 
@@ -95,7 +91,9 @@ class TransactionTile extends StatelessWidget {
                         // Badge kategori
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 1),
+                            horizontal: 6,
+                            vertical: 1,
+                          ),
                           decoration: BoxDecoration(
                             color: accentColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),

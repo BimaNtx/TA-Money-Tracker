@@ -24,7 +24,11 @@ class _MainScreenState extends State<MainScreen> {
   // --- CRUD Operations ---
 
   void _addTransaction(
-      TransactionType type, int amount, String description, String category) {
+    TransactionType type,
+    int amount,
+    String description,
+    String category,
+  ) {
     final newTransaction = Transaction(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       type: type,
@@ -38,8 +42,13 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {}); // trigger rebuild untuk update saldo
   }
 
-  void _editTransaction(Transaction old, TransactionType type, int amount,
-      String description, String category) {
+  void _editTransaction(
+    Transaction old,
+    TransactionType type,
+    int amount,
+    String description,
+    String category,
+  ) {
     final updated = old.copyWith(
       type: type,
       amount: amount,
@@ -67,8 +76,9 @@ class _MainScreenState extends State<MainScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.inverseSurface,
           behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           duration: const Duration(seconds: 2),
         ),
@@ -167,20 +177,26 @@ class _MainScreenState extends State<MainScreen> {
               destinations: const [
                 NavigationDestination(
                   icon: Icon(Icons.home_outlined),
-                  selectedIcon:
-                      Icon(Icons.home_rounded, color: Color(0xFF009688)),
+                  selectedIcon: Icon(
+                    Icons.home_rounded,
+                    color: Color(0xFF009688),
+                  ),
                   label: 'Beranda',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.receipt_long_outlined),
-                  selectedIcon:
-                      Icon(Icons.receipt_long_rounded, color: Color(0xFF009688)),
+                  selectedIcon: Icon(
+                    Icons.receipt_long_rounded,
+                    color: Color(0xFF009688),
+                  ),
                   label: 'Riwayat',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.person_outline),
-                  selectedIcon:
-                      Icon(Icons.person_rounded, color: Color(0xFF009688)),
+                  selectedIcon: Icon(
+                    Icons.person_rounded,
+                    color: Color(0xFF009688),
+                  ),
                   label: 'Profil',
                 ),
               ],

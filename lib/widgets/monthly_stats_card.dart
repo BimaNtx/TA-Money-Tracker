@@ -74,18 +74,20 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final cardBorder =
-        isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF0F0F0);
-    final titleColor =
-        isDark ? Colors.white : const Color(0xFF212121);
-    final subColor =
-        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
-    final dividerColor =
-        isDark ? const Color(0xFF2C2C2C) : const Color(0xFFF5F5F5);
-    final selisihLabelColor =
-        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF757575);
-    final emptyTextColor =
-        isDark ? const Color(0xFF555555) : const Color(0xFFBDBDBD);
+    final cardBorder = isDark
+        ? const Color(0xFF2C2C2C)
+        : const Color(0xFFF0F0F0);
+    final titleColor = isDark ? Colors.white : const Color(0xFF212121);
+    final subColor = isDark ? const Color(0xFFAAAAAA) : const Color(0xFF9E9E9E);
+    final dividerColor = isDark
+        ? const Color(0xFF2C2C2C)
+        : const Color(0xFFF5F5F5);
+    final selisihLabelColor = isDark
+        ? const Color(0xFFAAAAAA)
+        : const Color(0xFF757575);
+    final emptyTextColor = isDark
+        ? const Color(0xFF555555)
+        : const Color(0xFFBDBDBD);
 
     final total = widget.monthlyIncome + widget.monthlyExpense;
     final incomePercent = total > 0
@@ -217,8 +219,8 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                                 _touchedIndex = null;
                                 return;
                               }
-                              _touchedIndex = response
-                                  .touchedSection!.touchedSectionIndex;
+                              _touchedIndex =
+                                  response.touchedSection!.touchedSectionIndex;
                             });
                           },
                         ),
@@ -233,24 +235,24 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                             _touchedIndex == null
                                 ? '$incomePercent%'
                                 : _touchedIndex == 0
-                                    ? '$incomePercent%'
-                                    : '$expensePercent%',
+                                ? '$incomePercent%'
+                                : '$expensePercent%',
                             style: GoogleFonts.poppins(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: _touchedIndex == null
                                   ? titleColor
                                   : _touchedIndex == 0
-                                      ? _kIncomeColor
-                                      : _kExpenseColor,
+                                  ? _kIncomeColor
+                                  : _kExpenseColor,
                             ),
                           ),
                           Text(
                             _touchedIndex == null
                                 ? 'Total'
                                 : _touchedIndex == 0
-                                    ? 'Masuk'
-                                    : 'Keluar',
+                                ? 'Masuk'
+                                : 'Keluar',
                             style: GoogleFonts.poppins(
                               fontSize: 9,
                               color: subColor,
@@ -296,10 +298,7 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                     if (_hasData) ...[
                       const SizedBox(height: 14),
                       // Divider tipis
-                      Container(
-                        height: 1,
-                        color: dividerColor,
-                      ),
+                      Container(height: 1, color: dividerColor),
                       const SizedBox(height: 10),
                       // Net balance bulan ini
                       Row(
@@ -314,11 +313,13 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                           const Spacer(),
                           Text(
                             formatCurrency(
-                                widget.monthlyIncome - widget.monthlyExpense),
+                              widget.monthlyIncome - widget.monthlyExpense,
+                            ),
                             style: GoogleFonts.poppins(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: widget.monthlyIncome >= widget.monthlyExpense
+                              color:
+                                  widget.monthlyIncome >= widget.monthlyExpense
                                   ? _kIncomeColor
                                   : _kExpenseColor,
                             ),
@@ -391,7 +392,9 @@ class _MonthlyStatsCardState extends State<MonthlyStatsCard> {
                     const Spacer(),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 1),
+                        horizontal: 6,
+                        vertical: 1,
+                      ),
                       decoration: BoxDecoration(
                         color: color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),

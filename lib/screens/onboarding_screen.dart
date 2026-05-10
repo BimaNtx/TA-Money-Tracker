@@ -81,10 +81,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         pageBuilder: (ctx, animation, secondary) => const MainScreen(),
         transitionsBuilder: (ctx, animation, secondary, child) {
           return FadeTransition(
-            opacity: CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeIn,
-            ),
+            opacity: CurvedAnimation(parent: animation, curve: Curves.easeIn),
             child: child,
           );
         },
@@ -96,8 +93,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5);
+    final bgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5);
     final isLastPage = _currentPage == _pages.length - 1;
 
     return Scaffold(
@@ -206,8 +202,9 @@ class _OnboardingPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleColor = isDark ? Colors.white : const Color(0xFF1A1A2E);
-    final subtitleColor =
-        isDark ? const Color(0xFFAAAAAA) : const Color(0xFF6B7280);
+    final subtitleColor = isDark
+        ? const Color(0xFFAAAAAA)
+        : const Color(0xFF6B7280);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -216,29 +213,25 @@ class _OnboardingPageView extends StatelessWidget {
         children: [
           // Ikon dengan gradient + glow
           Container(
-            width: 140,
-            height: 140,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: page.gradientColors,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(40),
-              boxShadow: [
-                BoxShadow(
-                  color: page.gradientColors.last.withValues(alpha: 0.35),
-                  blurRadius: 32,
-                  offset: const Offset(0, 12),
+                width: 140,
+                height: 140,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: page.gradientColors,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(40),
+                  boxShadow: [
+                    BoxShadow(
+                      color: page.gradientColors.last.withValues(alpha: 0.35),
+                      blurRadius: 32,
+                      offset: const Offset(0, 12),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Icon(
-              page.icon,
-              size: 68,
-              color: Colors.white,
-            ),
-          )
+                child: Icon(page.icon, size: 68, color: Colors.white),
+              )
               .animate(target: isActive ? 1 : 0)
               .scale(
                 begin: const Offset(0.8, 0.8),
@@ -252,15 +245,15 @@ class _OnboardingPageView extends StatelessWidget {
 
           // Judul
           Text(
-            page.title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: titleColor,
-              height: 1.2,
-            ),
-          )
+                page.title,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  color: titleColor,
+                  height: 1.2,
+                ),
+              )
               .animate(target: isActive ? 1 : 0)
               .fade(duration: 400.ms, delay: 100.ms)
               .slideY(
@@ -275,14 +268,14 @@ class _OnboardingPageView extends StatelessWidget {
 
           // Subjudul
           Text(
-            page.subtitle,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontSize: 15,
-              color: subtitleColor,
-              height: 1.6,
-            ),
-          )
+                page.subtitle,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 15,
+                  color: subtitleColor,
+                  height: 1.6,
+                ),
+              )
               .animate(target: isActive ? 1 : 0)
               .fade(duration: 400.ms, delay: 180.ms)
               .slideY(
@@ -392,51 +385,51 @@ class _FinishButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 56,
-      width: double.infinity,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF4DB6AC), Color(0xFF00796B)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF009688).withValues(alpha: 0.4),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
+          height: 56,
+          width: double.infinity,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF4DB6AC), Color(0xFF00796B)],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
               borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF009688).withValues(alpha: 0.4),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.rocket_launch_rounded, size: 20),
-              const SizedBox(width: 10),
-              Text(
-                'Mulai Sekarang',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+            child: ElevatedButton(
+              onPressed: onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
-            ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.rocket_launch_rounded, size: 20),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Mulai Sekarang',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    )
+        )
         .animate()
         .scale(
           begin: const Offset(0.9, 0.9),
