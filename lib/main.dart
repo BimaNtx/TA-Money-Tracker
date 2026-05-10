@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'models/transaction.dart';
-import 'screens/main_screen.dart';
+import 'screens/lock_screen.dart';
 import 'screens/onboarding_screen.dart';
 
 void main() async {
@@ -96,8 +96,9 @@ class MyApp extends StatelessWidget {
           theme: _lightTheme,
           darkTheme: _darkTheme,
           themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-          home:
-              hasSeenOnboarding ? const MainScreen() : const OnboardingScreen(),
+          home: hasSeenOnboarding
+              ? const LockScreen()
+              : const OnboardingScreen(),
         );
       },
     );
