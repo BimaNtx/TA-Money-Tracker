@@ -1,9 +1,10 @@
 import 'package:intl/intl.dart';
 
-/// Format angka ke format Rupiah: 15000 → "Rp 15.000"
+/// Format angka ke format Rupiah: 15000 → "Rp 15.000", -690000 → "-Rp 690.000"
 String formatCurrency(int amount) {
   final formatter = NumberFormat('#,###', 'id_ID');
-  return 'Rp ${formatter.format(amount)}';
+  final absFormatted = formatter.format(amount.abs());
+  return amount < 0 ? '-Rp $absFormatted' : 'Rp $absFormatted';
 }
 
 /// Format tanggal ke format Indonesia: "03 Mei 2026"
