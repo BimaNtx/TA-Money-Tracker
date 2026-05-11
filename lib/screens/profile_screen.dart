@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:money_tracker/models/transaction.dart';
+import 'package:money_tracker/screens/lock_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -154,6 +155,98 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } finally {
       if (mounted) setState(() => _isExporting = false);
     }
+  }
+
+  /// Hapus semua data transaksi dari Hive setelah konfirmasi user.
+  Future<void> _deleteAllData() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return AlertDialog(
+          backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Color(0xFFEF5350),
+                size: 26,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Hapus Semua Data?',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : const Color(0xFF212121),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Semua riwayat transaksi akan dihapus permanen dan tidak dapat dikembalikan.',
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              height: 1.5,
+              color: isDark
+                  ? const Color(0xFFAAAAAA)
+                  : const Color(0xFF757575),
+            ),
+          ),
+          actionsPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(
+                'Batal',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: isDark
+                      ? const Color(0xFFAAAAAA)
+                      : const Color(0xFF757575),
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFEF5350),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 20, vertical: 10),
+              ),
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(
+                'Hapus Permanen',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true) return;
+
+    await Hive.box<Transaction>('transactions').clear();
+
+    if (!mounted) return;
+    // Rebuild seluruh widget tree dari LockScreen (entry point) agar saldo reset ke Rp 0
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LockScreen()),
+      (_) => false,
+    );
   }
 
   @override
@@ -358,6 +451,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   curve: Curves.easeOutCubic,
                 ),
 
+            // ── Hapus Semua Data ─────────────────────────────────────────
+            _buildDeleteCard(isDark: isDark)
+                .animate()
+                .fade(duration: 400.ms, delay: 840.ms)
+                .slideX(
+                  begin: 0.15,
+                  end: 0,
+                  delay: 840.ms,
+                  duration: 400.ms,
+                  curve: Curves.easeOutCubic,
+                ),
+
             const SizedBox(height: 24),
 
             // Footer badge — fade
@@ -541,6 +646,84 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       : const Color(0xFFBDBDBD),
                   size: 20,
                 ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Card destructive — Hapus Semua Data
+  Widget _buildDeleteCard({required bool isDark}) {
+    final cardColor = isDark
+        ? const Color(0xFF2A1515)
+        : const Color(0xFFFFF5F5);
+    final borderColor = isDark
+        ? const Color(0xFF5C2020)
+        : const Color(0xFFFFCDD2);
+
+    return Card(
+      elevation: 0,
+      color: cardColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: borderColor, width: 1),
+      ),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: InkWell(
+        onTap: _deleteAllData,
+        borderRadius: BorderRadius.circular(14),
+        splashColor: const Color(0xFFEF5350).withValues(alpha: 0.08),
+        highlightColor: const Color(0xFFEF5350).withValues(alpha: 0.04),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              // Icon container
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEF5350).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.delete_forever_rounded,
+                  color: Color(0xFFEF5350),
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 14),
+              // Teks
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Hapus Semua Data',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFFEF5350),
+                      ),
+                    ),
+                    Text(
+                      'Hapus seluruh riwayat transaksi secara permanen',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: isDark
+                            ? const Color(0xFF995555)
+                            : const Color(0xFFE57373),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: Color(0xFFEF5350),
+                size: 20,
+              ),
             ],
           ),
         ),
