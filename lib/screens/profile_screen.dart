@@ -191,13 +191,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             style: GoogleFonts.poppins(
               fontSize: 13,
               height: 1.5,
-              color: isDark
-                  ? const Color(0xFFAAAAAA)
-                  : const Color(0xFF757575),
+              color: isDark ? const Color(0xFFAAAAAA) : const Color(0xFF757575),
             ),
           ),
-          actionsPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
@@ -221,7 +221,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 10),
+                  horizontal: 20,
+                  vertical: 10,
+                ),
               ),
               onPressed: () => Navigator.of(ctx).pop(true),
               child: Text(
