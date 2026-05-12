@@ -71,8 +71,11 @@ class _LockScreenState extends State<LockScreen>
       final bool isDeviceSupported = await _auth.isDeviceSupported();
 
       if (!canCheckBiometrics && !isDeviceSupported) {
-        // Perangkat tidak punya keamanan — langsung masuk
-        if (mounted) _goToMainScreen();
+        // Perangkat tidak punya keamanan — tampilkan pesan, jangan bypass masuk
+        setState(() {
+          _errorMessage =
+              'Perangkat tidak mendukung autentikasi. Aktifkan PIN atau biometrik di pengaturan.';
+        });
         return;
       }
 
@@ -93,15 +96,19 @@ class _LockScreenState extends State<LockScreen>
       }
     }
 
-    if (authenticated && mounted) {
+    // ── GUARD: navigasi HANYA jika authenticated == true ──────────────────
+    if (!mounted) return;
+
+    if (authenticated) {
       HapticFeedback.lightImpact();
       _goToMainScreen();
-    } else if (!authenticated && mounted && _errorMessage == null) {
-      // Pengguna membatalkan — tetap di lock screen
+    } else if (_errorMessage == null) {
+      // Pengguna membatalkan pop-up biometrik — tetap di LockScreen
       setState(() {
         _errorMessage =
             'Otentikasi dibatalkan. Tekan tombol untuk mencoba lagi.';
       });
+      _shakeController.forward(from: 0);
     }
   }
 

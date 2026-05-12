@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'main_screen.dart';
+import 'lock_screen.dart';
 
 // ── Data model untuk setiap halaman onboarding ────────────────────────────────
 class _OnboardingPage {
@@ -78,7 +78,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     Hive.box('settings').put('hasSeenOnboarding', true);
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
-        pageBuilder: (ctx, animation, secondary) => const MainScreen(),
+        pageBuilder: (ctx, animation, secondary) => const LockScreen(),
         transitionsBuilder: (ctx, animation, secondary, child) {
           return FadeTransition(
             opacity: CurvedAnimation(parent: animation, curve: Curves.easeIn),

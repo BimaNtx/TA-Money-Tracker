@@ -61,12 +61,11 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # ── Konfigurasi Launcher Icon ─────────────────────────────────────────────────
-flutter_launcher_icons:
+flutter_icons:
   android: true
   ios: true
   image_path: "assets/icon.png"
-  min_sdk_android: 21
-  adaptive_icon_background: "#0D1B2A"   # Warna background dark navy (sesuai tema app)
+  adaptive_icon_background: "#FFFFFF" # Background putih bersih sesuai desain flat
   adaptive_icon_foreground: "assets/icon.png"
   web:
     generate: false
